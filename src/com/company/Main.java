@@ -14,7 +14,10 @@ public class Main {
         String expr = in.nextLine();
         expr += " ";
         String[] symbols = expr.split(" ");   //разделяем по пробелам
-        String[] to_pol = reverse_polish(symbols); //хотим перевести в обратную польскую нотацию
+        String[] to_pol = reverse_polish(symbols);
+        for(int j = 0; j < symbols.length; j++){
+            System.out.println(to_pol[j]);                                            //хотим перевести в обратную польскую нотацию
+        }
         int my_res = calculation(to_pol);
         System.out.println(my_res);
         in.close();
@@ -97,19 +100,19 @@ public class Main {
     }
 
     public static int calculation(String[] symbols){    //вычисляем значение выражения, после
-        Queue<Integer> stack = new LinkedList<>();      //записи в польской нотации
+        Deque<Integer> queue = new LinkedList<>();      //записи в польской нотации
         for(int i = 0; i < symbols.length; i++){
             if (is_oper(symbols[i])){           //если число - отправляем в очередь
-                int tmp = stack.poll();         //если операция, то берём из очереди два первых
-                int res = simple_calc(tmp, stack.poll(), symbols[i]);   //числа и считаем для них
-                stack.offer(res);               //отправляем опять в очередь
-                //System.out.println("res = " + res );
+                int tmp = queue.pollLast();         //если операция, то берём из очереди два первых
+                int res = simple_calc(tmp, queue.pollLast(), symbols[i]);   //числа и считаем для них
+                queue.add(res);               //отправляем опять в очередь
+                System.out.println("res = " + res );
             }
             else if (is_number(symbols[i])) {
                 int tmp = Integer.parseInt(symbols[i]);
-                stack.offer(tmp);
+                queue.add(tmp);
             }
         }
-        return stack.poll();    //получили ответ
+        return queue.pollLast();    //получили ответ
     }
 }
