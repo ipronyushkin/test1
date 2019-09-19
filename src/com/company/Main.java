@@ -15,9 +15,6 @@ public class Main {
         expr += " ";
         String[] symbols = expr.split(" ");   //разделяем по пробелам
         String[] to_pol = reverse_polish(symbols);
-        for(int j = 0; j < symbols.length; j++){
-            System.out.println(to_pol[j]);                                            //хотим перевести в обратную польскую нотацию
-        }
         int my_res = calculation(to_pol);
         System.out.println(my_res);
         in.close();
@@ -25,7 +22,7 @@ public class Main {
 
      public static String[] reverse_polish(String[] symbols) {
         Stack<String> stack = new Stack<>();        //стек операций
-        String[] ans = new String[symbols.length];    //выходной массив
+        String[] ans = new String[symbols.length];  //выходной массив
         int j = 0;
         for (int i = 0; i < symbols.length; i++) {
             if (symbols[i].equals("(")) {              //если "(", то отправляем в стек
@@ -89,30 +86,30 @@ public class Main {
 
     public static int simple_calc(int x, int y, String oper){   //два числа и операция - вычисляем
         if (oper.equals("*")){
-            return x * y;
+            return y * x;
         } else if (oper.equals("/")) {
-            return x / y;
+            return y / x;
         } else if (oper.equals("+")) {
-            return x + y;
+            return y + x;
         } else {
-            return x - y;
+            return y - x;
         }
     }
 
     public static int calculation(String[] symbols){    //вычисляем значение выражения, после
-        Deque<Integer> queue = new LinkedList<>();      //записи в польской нотации
+        Stack<Integer> stack = new Stack<>();           //записи в польской нотации
         for(int i = 0; i < symbols.length; i++){
-            if (is_oper(symbols[i])){           //если число - отправляем в очередь
-                int tmp = queue.pollLast();         //если операция, то берём из очереди два первых
-                int res = simple_calc(tmp, queue.pollLast(), symbols[i]);   //числа и считаем для них
-                queue.add(res);               //отправляем опять в очередь
-                System.out.println("res = " + res );
+            if (is_oper(symbols[i])){           //если число - отправляем в стек
+                int tmp = stack.pop();          //если операция, то берём из стека два первых
+                int res = simple_calc(tmp, stack.pop(), symbols[i]);   //числа и считаем для них
+                stack.push(res);                //отправляем опять в стек
+                //System.out.println("res = " + res );
             }
             else if (is_number(symbols[i])) {
                 int tmp = Integer.parseInt(symbols[i]);
-                queue.add(tmp);
+                stack.push(tmp);
             }
         }
-        return queue.pollLast();    //получили ответ
+        return stack.peek();    //получили ответ
     }
 }
